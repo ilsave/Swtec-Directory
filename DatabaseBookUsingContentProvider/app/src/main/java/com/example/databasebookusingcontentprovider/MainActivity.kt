@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity(), ProviderWorker {
         bundle.putParcelable("item", item)
         intent.putExtras(bundle)
         startActivityForResult(intent,1)
-        contentResolver.notifyChange(DIARY_TABLE_CONTENT_URI, contentObserver)
+        contentResolver.notifyChange(DIARY_TABLE_CONTENT_URI, null)
     }
 
     private fun getDbFromLesson(): List<Item>{
@@ -100,9 +100,9 @@ class MainActivity : AppCompatActivity(), ProviderWorker {
 
     inner class MyContentObserver(handler: Handler) : ContentObserver(handler){
 
-        override fun onChange(selfChange: Boolean, uri: Uri?, flags: Int) {
-            super.onChange(selfChange, uri, flags)
+        override fun onChange(selfChange: Boolean) {
             Log.d("IlsaveObserver", "message from contentobserver")
+            super.onChange(selfChange)
         }
     }
 }
