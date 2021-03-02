@@ -3,9 +3,11 @@ package com.example.databasebookusingcontentprovider
 import android.content.ContentValues
 import android.content.Intent
 import android.content.UriMatcher
+import android.database.ContentObserver
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,10 +27,13 @@ class MainActivity : AppCompatActivity(), ProviderWorker {
 
 
     private lateinit var recyclerView: RecyclerView
+    private val contentObserver = MyContentObserver(Handler())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        contentResolver.registerContentObserver(DIARY_TABLE_CONTENT_URI, true, contentObserver)
 
         recyclerView = findViewById(R.id.rvItems)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -53,9 +58,10 @@ class MainActivity : AppCompatActivity(), ProviderWorker {
     override fun updateItem(item: Item) {
         val intent = Intent(this, UpdateActivity::class.java)
         val bundle = Bundle()
-        bundle.putSerializable("item", item)
+        bundle.putParcelable("item", item)
         intent.putExtras(bundle)
         startActivityForResult(intent,1)
+        contentResolver.notifyChange(DIARY_TABLE_CONTENT_URI, contentObserver)
     }
 
     private fun getDbFromLesson(): List<Item>{
@@ -89,6 +95,14 @@ class MainActivity : AppCompatActivity(), ProviderWorker {
             contentResolver?.update(uri, contentValues, null, null)
             recyclerView.adapter = AdapterContentProvider(this, getDbFromLesson())
             (recyclerView.adapter as AdapterContentProvider).notifyDataSetChanged()
+        }
+    }
+
+    inner class MyContentObserver(handler: Handler) : ContentObserver(handler){
+
+        override fun onChange(selfChange: Boolean, uri: Uri?, flags: Int) {
+            super.onChange(selfChange, uri, flags)
+            Log.d("IlsaveObserver", "message from contentobserver")
         }
     }
 }

@@ -25,7 +25,7 @@ class UpdateActivity : AppCompatActivity() {
             val bundle = Bundle()
             val customItem = Item(item.id, editText.text.toString(), item.date)
             Log.d("IlsaveCustom", customItem.toString())
-            bundle.putSerializable("itemCustom", customItem)
+            bundle.putParcelable("itemCustom", customItem)
             intent.putExtras(bundle)
             setResult(RESULT_OK, intent);
             finish();
