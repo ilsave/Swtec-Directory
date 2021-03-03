@@ -1,5 +1,6 @@
 package com.example.databasebookusingcontentprovider
 
+import android.app.NotificationManager
 import android.content.ContentValues
 import android.content.Intent
 import android.content.UriMatcher
@@ -42,7 +43,6 @@ class MainActivity : AppCompatActivity(), ProviderWorker {
 
         recyclerView.adapter = AdapterContentProvider(this, getDbFromLesson())
         (recyclerView.adapter as AdapterContentProvider).notifyDataSetChanged()
-
     }
 
     override fun deleteItem(id: Long) {
@@ -102,8 +102,6 @@ class MainActivity : AppCompatActivity(), ProviderWorker {
 
         override fun onChange(selfChange: Boolean) {
             Log.d("IlsaveObserver", "message from contentobserver")
-            recyclerView.adapter = AdapterContentProvider(this, getDbFromLesson())
-            (recyclerView.adapter as AdapterContentProvider).notifyDataSetChanged()
             super.onChange(selfChange)
         }
     }
